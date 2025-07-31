@@ -1,28 +1,48 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:git/Pages/home_page.dart';
-import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'core/di/injection.dart';
+import 'core/theme/app_theme.dart';
+import 'presentation/pages/splash/splash_page.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Configure system UI
   SystemChrome.setSystemUIOverlayStyle(
-      SystemUiOverlayStyle(statusBarColor: Colors.transparent));
-  runApp(MyApp());
+    const SystemUiOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.light,
+      systemNavigationBarColor: Colors.transparent,
+      systemNavigationBarIconBrightness: Brightness.light,
+    ),
+  );
+
+  // Set preferred orientations
+  await SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown,
+  ]);
+
+  // Initialize dependency injection
+  configureDependencies();
+
+  runApp(const ProviderScope(child: NexGenMusicApp()));
 }
 
-class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+class NexGenMusicApp extends ConsumerWidget {
+  const NexGenMusicApp({super.key});
 
-  // This widget is the root of your application.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
-      title: 'Flutter Demo',
-      theme: ThemeData(
-        fontFamily: GoogleFonts.poppins().fontFamily,
-      ),
+      title: 'NexGen Music',
       debugShowCheckedModeBanner: false,
-      home: HomePage(),
+      theme: AppTheme.lightTheme,
+      darkTheme: AppTheme.darkTheme,
+      themeMode: ThemeMode.system,
+      home: const SplashPage(),
     );
   }
 }
