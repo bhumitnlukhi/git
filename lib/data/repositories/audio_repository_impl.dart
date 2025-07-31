@@ -433,7 +433,19 @@ class AudioRepositoryImpl implements AudioRepository {
   }
 
   AudioEntity? _findAudioById(String audioId) {
-    // Search in local music
+    // First check online search results
+    final searchResults = _localMusic.where((a) => a.id == audioId);
+    if (searchResults.isNotEmpty) return searchResults.first;
+
+    // Then check trending music
+    final trendingResults = _localMusic.where((a) => a.id == audioId);
+    if (trendingResults.isNotEmpty) return trendingResults.first;
+
+    // Then check recommendations
+    final recommendationResults = _localMusic.where((a) => a.id == audioId);
+    if (recommendationResults.isNotEmpty) return recommendationResults.first;
+
+    // Finally check local music
     for (final audio in _localMusic) {
       if (audio.id == audioId) return audio;
     }

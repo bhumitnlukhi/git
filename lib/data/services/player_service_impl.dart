@@ -269,7 +269,9 @@ class PlayerServiceImpl implements PlayerRepository {
   @override
   Future<Either<Failure, void>> skipToIndex(int index) async {
     try {
-      await _audioPlayer.seek(Duration.zero, index: index);
+      if (index >= 0 && index < _currentState.queue.length) {
+        await _audioPlayer.seekToItem(index);
+      }
       return const Right(null);
     } catch (e) {
       return Left(PlayerFailure(e.toString()));
